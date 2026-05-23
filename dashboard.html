@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — MindPulse</title>
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f8fafc; /* Very light slate */
+      color: #0f172a;
+    }
+
+    .glass-card {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-green {
+      background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+      color: white;
+      border: none;
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Progress Ring Transition */
+    .progress-ring__circle {
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden selection:bg-brand-500 selection:text-white">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 hidden md:flex z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+    <div>
+      <div class="h-20 flex items-center px-8">
+        <a href="index.html" class="text-2xl font-bold tracking-tight text-brand-800 flex items-center space-x-2">
+          <i data-lucide="brain" class="w-7 h-7 text-brand-500"></i>
+          <span>MindPulse</span>
+        </a>
+      </div>
+      <div class="p-4 space-y-1 mt-4">
+        <div class="text-xs font-bold text-slate-400 mb-4 px-4 uppercase tracking-widest">Menu</div>
+        <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 bg-brand-50 text-brand-800 rounded-xl font-bold border-r-4 border-brand-500">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="reports.html" class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-brand-800 rounded-xl font-semibold transition">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+          <span>Reports</span>
+        </a>
+        <a href="checkin.html" class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-brand-800 rounded-xl font-semibold transition">
+          <i data-lucide="plus-circle" class="w-5 h-5"></i>
+          <span>Check-In</span>
+        </a>
+      </div>
+    </div>
+    <div class="p-6">
+      <div class="card-green rounded-2xl p-5 relative overflow-hidden shadow-lg shadow-brand-900/20">
+        <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-5 rounded-full blur-xl"></div>
+        <div class="font-bold text-sm mb-1">Mobile App</div>
+        <div class="text-xs text-brand-100 mb-4 opacity-90">Get on-the-go wellness tracking</div>
+        <button class="w-full py-2 bg-brand-500 hover:bg-brand-400 rounded-lg text-xs font-bold transition shadow-sm">Download</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+    <!-- Top Bar -->
+    <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+      <div class="relative w-full max-w-md hidden sm:block">
+        <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+        <input type="text" placeholder="Search tasks or insights..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition font-medium text-slate-700">
+      </div>
+      <!-- Mobile brand -->
+      <div class="sm:hidden font-bold text-xl text-brand-800 flex items-center space-x-2">
+        <i data-lucide="brain" class="w-6 h-6 text-brand-500"></i><span>MindPulse</span>
+      </div>
+
+      <div class="flex items-center space-x-6 text-slate-500 ml-auto">
+        <button class="hover:text-brand-800 transition"><i data-lucide="mail" class="w-5 h-5"></i></button>
+        <button class="hover:text-brand-800 transition relative">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-0 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+        </button>
+        <div class="flex items-center space-x-3 border-l border-slate-200 pl-6 cursor-pointer hover:opacity-80 transition">
+          <div class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-800 font-bold shadow-sm border border-brand-200">
+            BM
+          </div>
+          <div class="hidden md:block text-sm font-bold text-slate-700">Bernabas M.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="flex-1 flex flex-col items-center justify-center">
+      <div class="relative w-16 h-16 flex items-center justify-center mb-4">
+        <div class="absolute inset-0 bg-brand-500/20 rounded-full animate-ping"></div>
+        <div class="relative animate-pulse text-brand-500"><i data-lucide="brain" class="w-10 h-10"></i></div>
+      </div>
+      <h3 class="text-lg font-bold text-slate-800">Processing Analytics...</h3>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-8 hidden fade-in" id="dashboard-content">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 space-y-4 sm:space-y-0">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900 mb-1 tracking-tight">Dashboard</h1>
+          <p class="text-sm text-slate-500 font-medium">Plan, prioritize, and manage your wellness with ease.</p>
+        </div>
+        <div class="flex space-x-3">
+           <a href="reports.html" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-sm shadow-sm hover:bg-slate-50 transition">Reports</a>
+           <a href="checkin.html" class="px-5 py-2.5 bg-brand-800 text-white font-bold rounded-xl text-sm shadow-md shadow-brand-800/20 hover:bg-brand-700 transition flex items-center space-x-1.5"><i data-lucide="plus" class="w-4 h-4"></i><span>Add Entry</span></a>
+        </div>
+      </div>
+
+      <!-- ROW 1: 4 Top Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <!-- Card 1: Green Accent -->
+        <div class="glass-card card-green p-5 flex flex-col justify-between shadow-lg shadow-brand-900/10">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-sm font-semibold opacity-90">Total Check-ins</span>
+            <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-3 h-3 text-white"></i></div>
+          </div>
+          <div class="text-4xl font-bold mb-2 tracking-tight" id="top-total">0</div>
+          <div class="text-xs font-medium bg-white/10 inline-block px-2 py-1 rounded w-max opacity-90 flex items-center space-x-1">
+            <i data-lucide="activity" class="w-3 h-3"></i><span>Active tracking</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="glass-card p-5 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2 text-slate-500">
+            <span class="text-sm font-semibold">Latest Sleep</span>
+            <div class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200 transition"><i data-lucide="moon" class="w-3 h-3"></i></div>
+          </div>
+          <div class="text-3xl font-bold mb-2 text-slate-800 tracking-tight" id="top-sleep">0h</div>
+          <div class="text-xs font-medium text-slate-400 flex items-center space-x-1">
+            <i data-lucide="clock" class="w-3 h-3"></i><span>Based on last entry</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="glass-card p-5 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2 text-slate-500">
+            <span class="text-sm font-semibold">Latest Stress</span>
+            <div class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200 transition"><i data-lucide="zap" class="w-3 h-3"></i></div>
+          </div>
+          <div class="text-3xl font-bold mb-2 text-slate-800 tracking-tight" id="top-stress">0/10</div>
+          <div class="text-xs font-medium text-slate-400 flex items-center space-x-1">
+            <i data-lucide="activity" class="w-3 h-3"></i><span>Based on last entry</span>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="glass-card p-5 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2 text-slate-500">
+            <span class="text-sm font-semibold">Screen Time</span>
+            <div class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200 transition"><i data-lucide="smartphone" class="w-3 h-3"></i></div>
+          </div>
+          <div class="text-3xl font-bold mb-2 text-slate-800 tracking-tight" id="top-screen">0h</div>
+          <div class="text-xs font-medium text-slate-400 flex items-center space-x-1">
+            <i data-lucide="eye" class="w-3 h-3"></i><span>Based on last entry</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Trend Chart & Behavioral Insights -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- 7-Day Trend Chart -->
+        <div class="glass-card p-6 lg:col-span-2 flex flex-col">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-base font-bold text-slate-800">Behavioral Analytics</h3>
+            <div class="flex items-center space-x-4 text-xs font-semibold text-slate-500">
+              <div class="flex items-center space-x-1.5">
+                <span class="inline-block w-3 h-3 rounded-full bg-brand-500"></span>
+                <span>Actual</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="inline-block w-3 h-3 rounded-full border-2 border-slate-300"></span>
+                <span>Baseline</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative w-full flex-1 min-h-[220px]">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Behavioral Insights (Reminders style) -->
+        <div class="glass-card p-6 flex flex-col">
+          <h3 class="text-base font-bold text-slate-800 mb-4">Actionable Insights</h3>
+          
+          <div id="insight-container" class="space-y-4 flex-1">
+            <!-- Populated by JS -->
+            <div class="text-sm text-slate-400">Analyzing trends...</div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <button class="w-full py-2.5 bg-brand-800 hover:bg-brand-700 text-white font-bold rounded-xl text-sm transition flex justify-center items-center space-x-2 shadow-md shadow-brand-800/10">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i><span>Review Full Report</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Adaptive Intervention, Score Ring, Burnout Risk -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Adaptive Intervention (Team Collaboration style) -->
+        <div class="glass-card p-6 flex flex-col">
+          <div class="flex justify-between items-center mb-5">
+            <h3 class="text-base font-bold text-slate-800">Adaptive Routine</h3>
+            <button class="px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition"><i data-lucide="refresh-cw" class="w-3 h-3 inline mr-1"></i>Reset</button>
+          </div>
+          <div class="flex-1 flex flex-col justify-center">
+            <div class="flex items-start space-x-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p id="recommendation-text" class="text-sm text-slate-700 font-semibold leading-snug">
+                  Fetching recommendation...
+                </p>
+                <p class="text-xs text-slate-400 mt-1">Suggested based on your latest entry</p>
+              </div>
+            </div>
+            
+            <div class="mt-2 space-y-2">
+              <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Feedback Loop</div>
+              <div class="flex space-x-2" id="feedback-controls">
+                <button id="btn-helpful" class="flex-1 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100 text-xs font-bold transition flex items-center justify-center space-x-1">
+                  <span>Helpful</span><i data-lucide="thumbs-up" class="w-3 h-3"></i>
+                </button>
+                <button id="btn-not-helpful" class="flex-1 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 hover:bg-rose-100 text-xs font-bold transition flex items-center justify-center space-x-1">
+                  <span>Not Helpful</span><i data-lucide="thumbs-down" class="w-3 h-3"></i>
+                </button>
+              </div>
+              <div id="feedback-thanks" class="hidden text-xs text-brand-600 font-bold py-1.5 text-center bg-brand-50 rounded-lg border border-brand-100">
+                Engine updated successfully.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recovery Score Ring (Project Progress style) -->
+        <div class="glass-card p-6 flex flex-col items-center relative">
+          <button id="tooltip-toggle" class="absolute top-4 right-4 text-slate-400 hover:text-brand-500 transition" title="Score Info">
+            <i data-lucide="info" class="w-4 h-4"></i>
+          </button>
+          <h3 class="text-base font-bold text-slate-800 mb-6 self-start">Recovery Score</h3>
+          
+          <div class="relative w-40 h-40 flex items-center justify-center mb-4 mt-2">
+            <svg class="w-full h-full transform -rotate-90">
+              <!-- Background half-circle effect by cutting stroke array -->
+              <!-- Standard circle -->
+              <circle class="text-slate-100" stroke-width="12" stroke="currentColor" fill="transparent" r="70" cx="80" cy="80"/>
+              <!-- Active circle -->
+              <circle id="progress-circle" class="progress-ring__circle" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="70" cx="80" cy="80"/>
+            </svg>
+            <div class="absolute text-center mt-2">
+              <span id="score-val" class="text-5xl font-extrabold tracking-tight text-slate-800">0</span>
+              <span class="text-xs text-slate-500 block font-bold" id="score-threshold">--</span>
+            </div>
+          </div>
+          
+          <div class="w-full flex justify-between px-4 text-xs font-bold text-slate-400">
+            <div class="flex items-center space-x-1"><div class="w-2 h-2 rounded-full bg-brand-500"></div><span>Optimal</span></div>
+            <div class="flex items-center space-x-1"><div class="w-2 h-2 rounded-full bg-amber-400"></div><span>Moderate</span></div>
+            <div class="flex items-center space-x-1"><div class="w-2 h-2 rounded-full bg-slate-200"></div><span>Critical</span></div>
+          </div>
+
+          <!-- Tooltip Dropdown -->
+          <div id="tooltip-card" class="hidden absolute inset-x-4 bottom-4 bg-white border border-slate-200 rounded-2xl p-4 text-xs leading-relaxed text-slate-600 shadow-xl z-10">
+            <span class="font-bold text-slate-900 block mb-1">Calculation Model</span>
+            Sleep and mood are prioritized as primary recovery indicators (65% weight). Stress, screen time, and exercise refine physical/mental readiness (35%).
+            <button id="tooltip-close" class="mt-3 w-full py-1.5 bg-slate-100 text-slate-700 rounded font-bold hover:bg-slate-200 transition">Close</button>
+          </div>
+        </div>
+
+        <!-- Burnout Risk (Time Tracker style dark green card) -->
+        <div class="glass-card card-green p-6 flex flex-col justify-between relative overflow-hidden shadow-lg shadow-brand-900/10">
+          <!-- decorative circles -->
+          <div class="absolute -bottom-10 -right-10 w-40 h-40 border-[20px] border-white/5 rounded-full"></div>
+          <div class="absolute -bottom-20 -right-20 w-60 h-60 border-[20px] border-white/5 rounded-full"></div>
+          
+          <h3 class="text-base font-bold text-white mb-2 relative z-10">Burnout Risk</h3>
+          
+          <div class="flex-1 flex flex-col justify-center relative z-10">
+            <div id="risk-badge" class="text-3xl font-extrabold tracking-tight mb-2">
+              Calculating...
+            </div>
+            <p id="risk-explanation" class="text-sm text-brand-100 leading-relaxed font-medium">
+              Diagnostics are evaluating recent logs and inputs.
+            </p>
+          </div>
+
+          <div class="mt-4 flex space-x-2 relative z-10">
+             <button class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"><i data-lucide="pause" class="w-4 h-4 text-white fill-current"></i></button>
+             <button class="w-8 h-8 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center shadow-lg transition"><i data-lucide="square" class="w-3 h-3 text-white fill-current"></i></button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const allEntries = getEntries();
+    if (allEntries.length === 0) {
+      window.location.href = 'checkin.html';
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        document.getElementById("loading-screen").classList.add("hidden");
+        document.getElementById("dashboard-content").classList.remove("hidden");
+        initDashboard();
+      }, 800); // slightly faster load
+    });
+
+    function initDashboard() {
+      const entries = getEntries();
+      const latest = entries[entries.length - 1];
+
+      // 1. Populate Top Cards
+      document.getElementById("top-total").innerText = entries.length;
+      document.getElementById("top-sleep").innerText = latest.sleep.toFixed(1) + 'h';
+      document.getElementById("top-stress").innerText = latest.stress + '/10';
+      document.getElementById("top-screen").innerText = latest.screenTime.toFixed(1) + 'h';
+
+      // 2. Recovery Score Ring
+      const score = calculateRecoveryScore(latest);
+      const threshold = getScoreThreshold(score);
+
+      const progressCircle = document.getElementById("progress-circle");
+      const radius = progressCircle.r ? progressCircle.r.baseVal.value : 70;
+      const circumference = 2 * Math.PI * radius;
+      
+      progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+      
+      // Map dark theme colors to light theme equivalents
+      let strokeColor = '#10b981'; // emerald-500
+      if(threshold.color.includes('rose')) strokeColor = '#f43f5e';
+      else if(threshold.color.includes('amber')) strokeColor = '#f59e0b';
+      else if(threshold.color.includes('emerald')) strokeColor = '#10b981';
+
+      progressCircle.style.stroke = strokeColor;
+      
+      const offset = circumference - (score / 100) * circumference;
+      progressCircle.style.strokeDashoffset = offset;
+
+      let currentVal = 0;
+      const scoreValLabel = document.getElementById("score-val");
+      scoreValLabel.style.color = strokeColor;
+      
+      const thresholdLabel = document.getElementById("score-threshold");
+      thresholdLabel.innerText = threshold.label;
+      thresholdLabel.style.color = strokeColor;
+
+      const counterInterval = setInterval(() => {
+        if (currentVal >= score) {
+          scoreValLabel.innerText = score;
+          clearInterval(counterInterval);
+        } else {
+          currentVal += Math.ceil(score / 25) || 1;
+          if (currentVal >= score) {
+            scoreValLabel.innerText = score;
+            clearInterval(counterInterval);
+          } else {
+            scoreValLabel.innerText = currentVal;
+          }
+        }
+      }, 30);
+
+      // Tooltip logic
+      document.getElementById("tooltip-toggle").addEventListener("click", () => {
+        document.getElementById("tooltip-card").classList.remove("hidden");
+      });
+      document.getElementById("tooltip-close").addEventListener("click", () => {
+        document.getElementById("tooltip-card").classList.add("hidden");
+      });
+
+      // 3. Burnout Risk (Dark Green Card)
+      const risk = getBurnoutRisk(latest);
+      const riskBadge = document.getElementById("risk-badge");
+      riskBadge.innerHTML = risk.level;
+      if(risk.level.includes("High")) riskBadge.classList.add("text-rose-400");
+      if(risk.level.includes("Medium")) riskBadge.classList.add("text-amber-400");
+      
+      document.getElementById("risk-explanation").innerText = risk.explanation;
+
+      // 4. Adaptive Intervention
+      const rec = getAdaptiveRecommendation(latest);
+      document.getElementById("recommendation-text").innerText = rec.text;
+
+      document.getElementById("btn-helpful").addEventListener("click", () => {
+        if (rec.category !== 'stable') updateFeedbackWeight(rec.category, true);
+        document.getElementById("feedback-controls").classList.add("hidden");
+        document.getElementById("feedback-thanks").classList.remove("hidden");
+      });
+
+      document.getElementById("btn-not-helpful").addEventListener("click", () => {
+        if (rec.category !== 'stable') updateFeedbackWeight(rec.category, false);
+        document.getElementById("feedback-controls").classList.add("hidden");
+        document.getElementById("feedback-thanks").classList.remove("hidden");
+      });
+
+      // 5. Behavioral Insights
+      const insights = analyzeBehavioralInsights();
+      const insightContainer = document.getElementById("insight-container");
+      insightContainer.innerHTML = '';
+      
+      insights.insights.forEach((insight, idx) => {
+        // Only show top 3 to match design
+        if(idx > 2) return;
+        
+        let iconBg = 'bg-slate-100 text-slate-600';
+        if(insight.tone === 'warning') iconBg = 'bg-amber-100 text-amber-600';
+        if(insight.tone === 'critical') iconBg = 'bg-rose-100 text-rose-600';
+        if(insight.tone === 'positive') iconBg = 'bg-emerald-100 text-emerald-600';
+
+        const item = document.createElement("div");
+        item.className = "flex items-start space-x-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0";
+        item.innerHTML = `
+          <div class="w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center shrink-0">
+            <i data-lucide="${insight.icon}" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <p class="text-sm text-slate-700 font-semibold leading-tight">${insight.text}</p>
+          </div>
+        `;
+        insightContainer.appendChild(item);
+      });
+
+      // 6. Trend Chart
+      renderChart();
+      lucide.createIcons();
+    }
+
+    function renderChart() {
+      const history = getSmartSeededHistory();
+      const labels = history.map(h => {
+        const d = new Date(h.timestamp);
+        return d.toLocaleDateString('en-US', { weekday: 'short' });
+      });
+
+      const actualData = [];
+      const baselineData = [];
+
+      history.forEach((h, index) => {
+        const score = calculateRecoveryScore(h);
+        if (h.isBaseline) {
+          baselineData.push(score);
+          actualData.push(null);
+        } else {
+          if (index > 0 && history[index - 1].isBaseline) {
+            actualData[index - 1] = calculateRecoveryScore(history[index - 1]);
+          }
+          actualData.push(score);
+          baselineData.push(null);
+        }
+      });
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      
+      // Light theme gradients
+      const brandGradient = ctx.createLinearGradient(0, 0, 0, 200);
+      brandGradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+      brandGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Baseline',
+              data: baselineData,
+              borderWidth: 2,
+              borderColor: '#cbd5e1', // slate-300
+              borderDash: [5, 5],
+              fill: false,
+              tension: 0.4,
+              pointBackgroundColor: '#cbd5e1',
+              pointRadius: 0,
+              spanGaps: true
+            },
+            {
+              label: 'Actual',
+              data: actualData,
+              borderWidth: 3,
+              borderColor: '#10b981', // brand-500
+              backgroundColor: brandGradient,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#10b981',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              spanGaps: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#ffffff',
+              titleColor: '#0f172a',
+              bodyColor: '#475569',
+              borderColor: '#e2e8f0',
+              borderWidth: 1,
+              titleFont: { family: 'Outfit', size: 12 },
+              bodyFont: { family: 'Outfit', size: 12 },
+              padding: 10,
+              displayColors: false
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } }
+            },
+            y: {
+              min: 0,
+              max: 100,
+              grid: { color: '#f1f5f9', drawBorder: false },
+              ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 11 }, stepSize: 20 }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

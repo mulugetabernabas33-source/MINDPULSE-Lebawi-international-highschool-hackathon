@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Check-In — MindPulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      min-height: 100vh;
+      color: #0f172a;
+    }
+    .glass-card {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: #d1fae5;
+      height: 6px;
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #10b981;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+      transition: transform 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+    .slider-stress-danger { background: #fee2e2 !important; }
+    .slider-stress-danger::-webkit-slider-thumb {
+      background: #ef4444 !important;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+    }
+    .fade-in { animation: fadeInUp 0.4s ease-out forwards; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-brand-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="w-full max-w-5xl mx-auto px-4 py-6 flex justify-between items-center">
+    <a href="index.html" class="flex items-center space-x-2">
+      <i data-lucide="brain" class="w-6 h-6 text-brand-500"></i>
+      <span class="text-xl font-bold tracking-tight text-brand-800">MINDPULSE</span>
+    </a>
+    <a href="index.html" class="text-xs font-bold text-slate-500 hover:text-brand-600 transition duration-200 flex items-center space-x-1">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Home</span>
+    </a>
+  </header>
+
+  <!-- Main Form Content -->
+  <main class="flex-1 flex items-center justify-center px-4 py-8">
+    <div class="glass-card w-full max-w-lg p-8 fade-in relative overflow-hidden">
+      <!-- Decorative element -->
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-brand-50 rounded-full blur-3xl opacity-50 z-0"></div>
+
+      <div class="mb-8 text-center relative z-10">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Daily Check-In</h2>
+        <p class="text-sm font-medium text-slate-500">Takes under 30 seconds to run diagnostics.</p>
+      </div>
+
+      <form id="checkin-form" class="space-y-6 relative z-10">
+        
+        <!-- Sleep -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+              <i data-lucide="moon" class="w-4 h-4 text-brand-500 shrink-0"></i>
+              <span>Sleep Duration</span>
+            </label>
+            <span id="sleep-val" class="text-sm font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">7.0 hours</span>
+          </div>
+          <input type="range" id="sleep" min="0" max="12" step="0.5" value="7" class="w-full">
+        </div>
+
+        <!-- Stress -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+              <i data-lucide="zap" class="w-4 h-4 text-brand-500 shrink-0"></i>
+              <span>Stress Level</span>
+            </label>
+            <span id="stress-val" class="text-sm font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">5 / 10</span>
+          </div>
+          <input type="range" id="stress" min="1" max="10" step="1" value="5" class="w-full">
+        </div>
+
+        <!-- Mood -->
+        <div class="space-y-3">
+          <label class="text-sm font-bold text-slate-700 flex items-center space-x-1.5"><i data-lucide="heart-pulse" class="w-4 h-4 text-brand-500 shrink-0"></i><span>Mood State</span></label>
+          <div class="grid grid-cols-5 gap-2" id="mood-selector">
+            <button type="button" data-val="1" class="mood-btn py-2.5 px-1 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-brand-300 text-xs font-bold text-slate-500 transition duration-200">Very Low</button>
+            <button type="button" data-val="2" class="mood-btn py-2.5 px-1 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-brand-300 text-xs font-bold text-slate-500 transition duration-200">Low</button>
+            <button type="button" data-val="3" class="mood-btn py-2.5 px-1 rounded-xl border-2 border-brand-400 bg-brand-50 text-brand-700 text-xs font-bold">Neutral</button>
+            <button type="button" data-val="4" class="mood-btn py-2.5 px-1 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-brand-300 text-xs font-bold text-slate-500 transition duration-200">Good</button>
+            <button type="button" data-val="5" class="mood-btn py-2.5 px-1 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-brand-300 text-xs font-bold text-slate-500 transition duration-200">Excellent</button>
+          </div>
+          <input type="hidden" id="mood" value="3">
+        </div>
+
+        <!-- Screen Time -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+              <i data-lucide="smartphone" class="w-4 h-4 text-brand-500 shrink-0"></i>
+              <span>Screen Time</span>
+            </label>
+            <span id="screentime-val" class="text-sm font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">4.0 hours</span>
+          </div>
+          <input type="range" id="screentime" min="0" max="12" step="0.5" value="4" class="w-full">
+        </div>
+
+        <!-- Exercise -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+              <i data-lucide="activity" class="w-4 h-4 text-brand-500 shrink-0"></i>
+              <span>Exercise</span>
+            </label>
+            <span id="exercise-val" class="text-sm font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100">30 mins</span>
+          </div>
+          <input type="range" id="exercise" min="0" max="120" step="5" value="30" class="w-full">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-6">
+          <button type="submit" class="w-full py-4 bg-brand-800 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-lg shadow-brand-800/20 transition duration-300 transform active:scale-95 flex justify-center items-center space-x-2">
+            <span>Analyze My Wellness</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Live feedback logic
+    const sleepSlider = document.getElementById('sleep');
+    const sleepLabel = document.getElementById('sleep-val');
+    sleepSlider.addEventListener('input', (e) => {
+      sleepLabel.innerText = parseFloat(e.target.value).toFixed(1) + ' hours';
+    });
+
+    const stressSlider = document.getElementById('stress');
+    const stressLabel = document.getElementById('stress-val');
+    
+    function updateStressUI(val) {
+      stressLabel.innerText = val + ' / 10';
+      if (val > 7) {
+        stressSlider.classList.add('slider-stress-danger');
+        stressLabel.className = 'text-sm font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-100';
+      } else {
+        stressSlider.classList.remove('slider-stress-danger');
+        stressLabel.className = 'text-sm font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-100';
+      }
+    }
+    
+    stressSlider.addEventListener('input', (e) => {
+      updateStressUI(parseInt(e.target.value));
+    });
+    updateStressUI(parseInt(stressSlider.value));
+
+    // Mood selection bindings
+    const moodHiddenInput = document.getElementById('mood');
+    const moodButtons = document.querySelectorAll('.mood-btn');
+    
+    moodButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        moodButtons.forEach(b => {
+          b.className = 'mood-btn py-2.5 px-1 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-brand-300 text-xs font-bold text-slate-500 transition duration-200';
+        });
+        btn.className = 'mood-btn py-2.5 px-1 rounded-xl border-2 border-brand-400 bg-brand-50 text-brand-700 text-xs font-bold';
+        moodHiddenInput.value = btn.getAttribute('data-val');
+      });
+    });
+
+    const screenTimeSlider = document.getElementById('screentime');
+    const screenTimeLabel = document.getElementById('screentime-val');
+    screenTimeSlider.addEventListener('input', (e) => {
+      screenTimeLabel.innerText = parseFloat(e.target.value).toFixed(1) + ' hours';
+    });
+
+    const exerciseSlider = document.getElementById('exercise');
+    const exerciseLabel = document.getElementById('exercise-val');
+    exerciseSlider.addEventListener('input', (e) => {
+      exerciseLabel.innerText = parseInt(e.target.value) + ' mins';
+    });
+
+    // Form submission
+    const form = document.getElementById('checkin-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const newEntry = {
+        timestamp: Date.now(),
+        sleep: parseFloat(sleepSlider.value),
+        stress: parseInt(stressSlider.value),
+        mood: parseInt(moodHiddenInput.value),
+        screenTime: parseFloat(screenTimeSlider.value),
+        exercise: parseInt(exerciseSlider.value)
+      };
+
+      saveEntry(newEntry);
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

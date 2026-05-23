@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behavioral Reports — MindPulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .glass-card {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+    .card-green {
+      background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+      color: white;
+      border: none;
+    }
+    .fade-in {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .glass-card {
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: none !important;
+        color: black !important;
+        break-inside: avoid;
+      }
+      * {
+        color: black !important;
+      }
+      .print-border {
+        border-color: #e2e8f0 !important;
+      }
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden selection:bg-brand-500 selection:text-white">
+
+  <!-- Sidebar -->
+  <aside class="no-print w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 hidden md:flex z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+    <div>
+      <div class="h-20 flex items-center px-8">
+        <a href="index.html" class="text-2xl font-bold tracking-tight text-brand-800 flex items-center space-x-2">
+          <i data-lucide="brain" class="w-7 h-7 text-brand-500"></i>
+          <span>MindPulse</span>
+        </a>
+      </div>
+      <div class="p-4 space-y-1 mt-4">
+        <div class="text-xs font-bold text-slate-400 mb-4 px-4 uppercase tracking-widest">Menu</div>
+        <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-brand-800 rounded-xl font-semibold transition">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="reports.html" class="flex items-center space-x-3 px-4 py-3 bg-brand-50 text-brand-800 rounded-xl font-bold border-r-4 border-brand-500">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+          <span>Reports</span>
+        </a>
+        <a href="checkin.html" class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-brand-800 rounded-xl font-semibold transition">
+          <i data-lucide="plus-circle" class="w-5 h-5"></i>
+          <span>Check-In</span>
+        </a>
+      </div>
+    </div>
+    <div class="p-6">
+      <div class="card-green rounded-2xl p-5 relative overflow-hidden shadow-lg shadow-brand-900/20">
+        <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-5 rounded-full blur-xl"></div>
+        <div class="font-bold text-sm mb-1">Mobile App</div>
+        <div class="text-xs text-brand-100 mb-4 opacity-90">Get on-the-go wellness tracking</div>
+        <button class="w-full py-2 bg-brand-500 hover:bg-brand-400 rounded-lg text-xs font-bold transition shadow-sm">Download</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+    <!-- Top Bar -->
+    <header class="no-print h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+      <div class="relative w-full max-w-md hidden sm:block">
+        <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+        <input type="text" placeholder="Search tasks or insights..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition font-medium text-slate-700">
+      </div>
+      <!-- Mobile brand -->
+      <div class="sm:hidden font-bold text-xl text-brand-800 flex items-center space-x-2">
+        <i data-lucide="brain" class="w-6 h-6 text-brand-500"></i><span>MindPulse</span>
+      </div>
+
+      <div class="flex items-center space-x-6 text-slate-500 ml-auto">
+        <button class="hover:text-brand-800 transition"><i data-lucide="mail" class="w-5 h-5"></i></button>
+        <button class="hover:text-brand-800 transition relative">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-0 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+        </button>
+        <div class="flex items-center space-x-3 border-l border-slate-200 pl-6 cursor-pointer hover:opacity-80 transition">
+          <div class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-800 font-bold shadow-sm border border-brand-200">
+            BM
+          </div>
+          <div class="hidden md:block text-sm font-bold text-slate-700">Bernabas M.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Print Header -->
+    <div class="hidden print:block w-full px-8 py-8 border-b border-slate-200 bg-white">
+      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">MindPulse Behavioral Report</h1>
+      <p class="text-sm text-slate-500 mt-2" id="print-date"></p>
+      <p class="text-sm text-slate-800 mt-1 font-bold" id="print-period-label"></p>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in">
+      
+      <!-- Page Header -->
+      <div class="no-print flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 space-y-4 sm:space-y-0">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900 mb-1 tracking-tight">Reports</h1>
+          <p class="text-sm text-slate-500 font-medium">Review detailed behavioral trends and risk distributions.</p>
+        </div>
+        <div class="flex space-x-3">
+          <button onclick="window.print()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-sm shadow-sm hover:bg-slate-50 transition flex items-center space-x-2">
+            <i data-lucide="printer" class="w-4 h-4"></i><span>Print Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls (No Print) -->
+      <div class="no-print flex justify-start space-x-3 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 w-max">
+        <button onclick="loadReport('weekly')" id="btn-weekly" class="report-btn px-6 py-2 rounded-xl text-sm font-bold transition duration-200 flex items-center space-x-2">
+          <i data-lucide="calendar" class="w-4 h-4"></i><span>Weekly</span>
+        </button>
+        <button onclick="loadReport('monthly')" id="btn-monthly" class="report-btn px-6 py-2 rounded-xl text-sm font-bold transition duration-200 flex items-center space-x-2">
+          <i data-lucide="calendar-days" class="w-4 h-4"></i><span>Monthly</span>
+        </button>
+        <button onclick="loadReport('yearly')" id="btn-yearly" class="report-btn px-6 py-2 rounded-xl text-sm font-bold transition duration-200 flex items-center space-x-2">
+          <i data-lucide="calendar-range" class="w-4 h-4"></i><span>Yearly</span>
+        </button>
+      </div>
+
+      <div id="report-content" class="space-y-6 hidden">
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="glass-card px-5 py-4 flex flex-col justify-between">
+            <div class="text-xs text-slate-400 font-semibold mb-1 flex items-center space-x-1.5"><i data-lucide="moon" class="w-3.5 h-3.5"></i><span>Sleep Avg</span></div>
+            <div class="text-2xl font-bold text-slate-800" id="stat-sleep">--</div>
+          </div>
+          <div class="glass-card px-5 py-4 flex flex-col justify-between">
+            <div class="text-xs text-slate-400 font-semibold mb-1 flex items-center space-x-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i><span>Stress Avg</span></div>
+            <div class="text-2xl font-bold text-slate-800" id="stat-stress">--</div>
+          </div>
+          <div class="glass-card px-5 py-4 flex flex-col justify-between">
+            <div class="text-xs text-slate-400 font-semibold mb-1 flex items-center space-x-1.5"><i data-lucide="smile" class="w-3.5 h-3.5"></i><span>Mood Avg</span></div>
+            <div class="text-2xl font-bold text-slate-800" id="stat-mood">--</div>
+          </div>
+          <div class="glass-card px-5 py-4 flex flex-col justify-between">
+            <div class="text-xs text-slate-400 font-semibold mb-1 flex items-center space-x-1.5"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>Screen Avg</span></div>
+            <div class="text-2xl font-bold text-slate-800" id="stat-screen">--</div>
+          </div>
+          <div class="glass-card px-5 py-4 flex flex-col justify-between col-span-2 lg:col-span-1">
+            <div class="text-xs text-slate-400 font-semibold mb-1 flex items-center space-x-1.5"><i data-lucide="activity" class="w-3.5 h-3.5"></i><span>Activity Avg</span></div>
+            <div class="text-2xl font-bold text-slate-800" id="stat-exercise">--</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Trend & Distribution -->
+          <div class="glass-card p-6 flex flex-col justify-between space-y-6">
+            <div>
+              <h3 class="text-base font-bold text-slate-800 mb-2">Recovery Trend</h3>
+              <p class="text-sm text-slate-500 mb-4">Overall trajectory for the selected period.</p>
+              <div id="trend-box" class="flex items-center space-x-3 text-lg font-bold">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100" id="trend-icon-bg">
+                  <i id="trend-icon" data-lucide="minus" class="w-5 h-5"></i>
+                </div>
+                <span id="trend-text">Stable</span>
+              </div>
+            </div>
+            
+            <div class="pt-6 border-t border-slate-100 print-border">
+              <h3 class="text-base font-bold text-slate-800 mb-4">Risk Distribution</h3>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center text-sm p-3 rounded-xl bg-rose-50 border border-rose-100">
+                  <span class="flex items-center space-x-2 text-rose-700 font-semibold"><i data-lucide="x-circle" class="w-4 h-4"></i> <span>Elevated Risk Days</span></span>
+                  <span class="font-bold text-rose-800" id="risk-high">0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm p-3 rounded-xl bg-amber-50 border border-amber-100">
+                  <span class="flex items-center space-x-2 text-amber-700 font-semibold"><i data-lucide="alert-circle" class="w-4 h-4"></i> <span>Moderate Risk Days</span></span>
+                  <span class="font-bold text-amber-800" id="risk-medium">0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                  <span class="flex items-center space-x-2 text-emerald-700 font-semibold"><i data-lucide="circle-check" class="w-4 h-4"></i> <span>Stable Days</span></span>
+                  <span class="font-bold text-emerald-800" id="risk-low">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Behavioral Insights -->
+          <div class="glass-card p-6 min-h-[400px]">
+            <h3 class="text-base font-bold text-slate-800 mb-1 flex items-center space-x-2"><i data-lucide="brain" class="w-5 h-5 text-brand-500"></i><span>Key Behavioral Insights</span></h3>
+            <p class="text-sm text-slate-500 mb-6">Generated analysis for the given period.</p>
+            <div id="insights-list" class="space-y-4">
+              <!-- Insights populated via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="text-center py-32 hidden glass-card mt-6">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="inbox" class="w-8 h-8 text-slate-400"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800">No data available</h2>
+        <p class="text-slate-500 mt-2">Complete more check-ins to generate this report.</p>
+        <a href="checkin.html" class="inline-block mt-6 px-6 py-2.5 bg-brand-800 hover:bg-brand-700 text-white font-bold rounded-xl text-sm transition shadow-md shadow-brand-800/10">Add First Check-In</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('print-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    function loadReport(period) {
+      // Update button styles
+      document.querySelectorAll('.report-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-brand-800', 'shadow-sm', 'border-slate-200');
+        btn.classList.add('text-slate-500', 'hover:bg-slate-50', 'border-transparent');
+      });
+      const activeBtn = document.getElementById(`btn-${period}`);
+      activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-50', 'border-transparent');
+      activeBtn.classList.add('bg-white', 'text-brand-800', 'shadow-sm', 'border-slate-200');
+
+      document.getElementById('print-period-label').innerText = `Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`;
+
+      const report = generateReport(period);
+      
+      if (!report || (report.riskDistribution.low === 0 && report.riskDistribution.medium === 0 && report.riskDistribution.high === 0)) {
+        document.getElementById('report-content').classList.add('hidden');
+        document.getElementById('empty-state').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('report-content').classList.remove('hidden');
+
+      // Populate Averages
+      document.getElementById('stat-sleep').innerText = `${report.averages.sleep}h`;
+      document.getElementById('stat-stress').innerText = `${report.averages.stress}/10`;
+      
+      const moodMap = { 1: 'Very Low', 2: 'Low', 3: 'Neutral', 4: 'Good', 5: 'Excellent' };
+      document.getElementById('stat-mood').innerText = moodMap[Math.round(report.averages.mood)] || '--';
+      
+      document.getElementById('stat-screen').innerText = `${report.averages.screenTime}h`;
+      document.getElementById('stat-exercise').innerText = `${report.averages.exercise}m`;
+
+      // Trend
+      const trendBox = document.getElementById('trend-box');
+      const trendIcon = document.getElementById('trend-icon');
+      const trendIconBg = document.getElementById('trend-icon-bg');
+      const trendText = document.getElementById('trend-text');
+
+      trendBox.className = 'flex items-center space-x-3 text-lg font-bold';
+      if (report.trend.direction === 'improving') {
+        trendBox.classList.add('text-emerald-600');
+        trendIconBg.className = 'w-10 h-10 rounded-full flex items-center justify-center bg-emerald-100 text-emerald-600';
+        trendIcon.setAttribute('data-lucide', 'trending-up');
+        trendText.innerText = `Improving (+${report.trend.diff})`;
+      } else if (report.trend.direction === 'declining') {
+        trendBox.classList.add('text-rose-600');
+        trendIconBg.className = 'w-10 h-10 rounded-full flex items-center justify-center bg-rose-100 text-rose-600';
+        trendIcon.setAttribute('data-lucide', 'trending-down');
+        trendText.innerText = `Declining (${report.trend.diff})`;
+      } else {
+        trendBox.classList.add('text-slate-600');
+        trendIconBg.className = 'w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-600';
+        trendIcon.setAttribute('data-lucide', 'minus');
+        trendText.innerText = 'Stable';
+      }
+
+      // Risk Distribution
+      document.getElementById('risk-high').innerText = report.riskDistribution.high;
+      document.getElementById('risk-medium').innerText = report.riskDistribution.medium;
+      document.getElementById('risk-low').innerText = report.riskDistribution.low;
+
+      // Insights
+      const list = document.getElementById('insights-list');
+      list.innerHTML = '';
+      report.insights.forEach(insight => {
+        let iconBg = 'bg-slate-100 text-slate-600';
+        if(insight.tone === 'positive') iconBg = 'bg-emerald-100 text-emerald-600';
+        if(insight.tone === 'warning') iconBg = 'bg-amber-100 text-amber-600';
+        if(insight.tone === 'critical') iconBg = 'bg-rose-100 text-rose-600';
+
+        const div = document.createElement('div');
+        div.className = `flex items-start space-x-3 pb-4 border-b border-slate-50 last:border-0 last:pb-0`;
+        div.innerHTML = `
+          <div class="w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center shrink-0 shadow-sm print:border print:border-slate-300">
+            <i data-lucide="${insight.icon}" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-slate-800 leading-snug">${insight.text}</div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Init
+    document.addEventListener("DOMContentLoaded", () => {
+      loadReport('weekly');
+    });
+  </script>
+</body>
+</html>
