@@ -35,7 +35,7 @@ MindPulse operates as a **personal self-tracking dashboard**:
 - Data is visualized into patterns and trends  
 - System highlights improvements or declines  
 - Helps users identify habits affecting performance  
-
+<img width="1920" height="977" alt="Screenshot (135)" src="https://github.com/user-attachments/assets/489f6ce7-efa2-4617-9a32-7fe7bb02c0ec" />
 ---
 
 ## Key Features
@@ -45,6 +45,7 @@ MindPulse operates as a **personal self-tracking dashboard**:
 - Focus level tracking  
 - Productivity score input  
 - Habit tracking (optional)  
+<img width="1920" height="974" alt="Screenshot (136)" src="https://github.com/user-attachments/assets/dbe3b2b2-d6ec-479f-8088-97c17a8b4d5a" />
 
 ---
 
@@ -53,6 +54,7 @@ MindPulse operates as a **personal self-tracking dashboard**:
 - Productivity pattern visualization  
 - Focus vs distraction comparison  
 - Behavior trend detection  
+<img width="1920" height="979" alt="Screenshot (137)" src="https://github.com/user-attachments/assets/30590d2b-0e12-484e-b1cf-4da937d7f1f1" />
 
 ---
 
@@ -127,4 +129,4 @@ MindPulse operates as a **personal self-tracking dashboard**:
 
 MindPulse is designed to be a **simple but powerful self-awareness tool** that helps users understand their daily behavior patterns and improve productivity without complexity or data privacy concerns.
 
-It focuses on clarity, speed, and meaningful insights rather than overwhelming features.<img width="1920" height="1080" alt="Screenshot (135)" src="https://github.com/user-attachments/assets/54c2790b-4aca-4091-9635-e71405c9fa07" />
+It focuses on clarity, speed, and meaningful insights rather than overwhelming features.
